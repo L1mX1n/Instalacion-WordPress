@@ -121,3 +121,48 @@ config.vm.network "forwarded_port", guest: 80, host: 8080
 # your network.
 config.vm.network "public_network"
 ```
+## Configurar permalinks (enllaços permanents)
+Para que funcionen los permalinks:
+
+Aseguramos que tengamos el fichero `.htaccess` en el directorio principal de nuestra web.
+~~~
+ # Fitxer .htaccess (al directori principal de la vostra web)
+ # BEGIN WordPress
+ <IfModule mod_rewrite.c>
+ RewriteEngine On
+ RewriteBase /
+ RewriteRule ^index\.php$ - [L]
+ RewriteCond %{REQUEST_FILENAME} !-f
+ RewriteCond %{REQUEST_FILENAME} !-d
+ RewriteRule . /index.php [L]
+ </IfModule>
+ # END WordPress
+~~~
+
+## Activar el mòdul rewrite de l'apache
+
+Activeu el mòdul `rewrite` de l'`apache2`.
+~~~
+sudo a2enmod rewrite
+~~~
+
+Canvieu la configuració al fitxer `/etc/apache2/apache2.conf` per permetre la reescritura de URLs.
+
+~~~
+ <Directory /var/www/>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+ </Directory>
+~~~
+
+Reinicieu l'`apache2`.
+~~~
+sudo service apache2 reload
+~~~
+
+## Configurar el mètode directe per a no fer servir FTP
+Per instal·lar plugins sense servidor `FTP`: afegiu a `wp-config.php` la següent línia:
+~~~
+define('FS_METHOD', 'direct');
+~~~
